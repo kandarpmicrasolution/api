@@ -3,4 +3,5 @@ export default {
   error: null,
   getCustomer: {},
   createCustomer: {},
+  editCustomer: {},
 };

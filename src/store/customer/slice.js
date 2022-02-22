@@ -1,8 +1,4 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  isRejectedWithValue,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../helpers/axios";
 
 import initialStates from "./state";
@@ -23,19 +19,46 @@ export const getCustomer = createAsyncThunk("customer", async () => {
 });
 
 // // createCustomer
-export const createCustomer = createAsyncThunk('createCustomer', async (data, { rejectWithValue }) => {
+export const createCustomer = createAsyncThunk(
+  "createCustomer",
+  async (data, { rejectWithValue }) => {
     try {
-        const response = await axios.post('http://192.168.0.194:9000/api/v1/customer', data)
+      const response = await axios.post(
+        "http://192.168.0.194:9000/api/v1/customer",
+        data
+      );
 
-        return response
+      return response;
     } catch (error) {
-        if (!error.response) {
-            throw error
-        }
-        // We got validation errors, let's return those so we can reference in our component and set form errors
-        return rejectWithValue(error.response.data)
+      if (!error.response) {
+        throw error;
+      }
+      // We got validation errors, let's return those so we can reference in our component and set form errors
+      return rejectWithValue(error.response.data);
     }
-})
+  }
+);
+
+// // editCustomer
+export const editCustomer = createAsyncThunk(
+  "editCustomer",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        "http://192.168.0.194:9000/api/v1/customer",
+        data
+      );
+
+      return response;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      // We got validation errors, let's return those so we can reference in our component and set form errors
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const customerSlice = createSlice({
   name: "customer",
@@ -52,6 +75,7 @@ const customerSlice = createSlice({
       state.status = "failed";
       state.error = action.payload.errorMessage;
     },
+
     [createCustomer.pending]: (state, action) => {
       state.status = "loading";
     },
@@ -60,6 +84,18 @@ const customerSlice = createSlice({
       state.createCustomer = action.payload;
     },
     [createCustomer.rejected]: (state, action) => {
+      state.status = "failed";
+      state.error = action.payload.errorMessage;
+    },
+
+    [editCustomer.pending]: (state, action) => {
+      state.status = "loading";
+    },
+    [editCustomer.fulfilled]: (state, action) => {
+      state.status = "succeeded";
+      state.editCustomer = action.payload;
+    },
+    [editCustomer.rejected]: (state, action) => {
       state.status = "failed";
       state.error = action.payload.errorMessage;
     },
